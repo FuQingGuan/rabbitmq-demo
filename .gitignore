@@ -1,3 +1,11 @@
+# Java
+*.iml
+.idea/
+target/
+.mvn/
+mvnw*
+logs/
+
 # Compiled class file
 *.class
 
