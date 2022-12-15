@@ -145,3 +145,26 @@ docker run -d -p 5672:5672 -p 15672:15672 -p 25672:25672 --name rabbitmq rabbitm
 ![](https://oss.yiki.tech/oss/202212151646497.png)
 
 ![](https://oss.yiki.tech/oss/202212151647913.png)
+
+### 避免消息丢失
+
+* 怎么避免消息丢失
+  * 生产者确认(确保消息到达消息中间件)
+  * 消息持久化(交换机持久化 队列持久化 消息持久化)
+  * 消费者确认(确保消息被消费者正确无误的消费)
+
+#### 消费者确认
+
+> 消费者确认, yml 配置 acknowledge-mode: manual. 监听器添加相应代码
+
+![](https://oss.yiki.tech/oss/202212151724909.png)
+
+![image-20221215183938761](https://oss.yiki.tech/oss/202212151839488.png)
+
+<div>
+  <!-- mp4格式 -->
+  <video id="video" controls="" width="800" height="500" preload="none" poster="封面">
+        <source id="mp4" src="https://oss.yiki.tech/oss/202212151843815.mp4" type="video/mp4">
+  </videos>
+</div>
+
