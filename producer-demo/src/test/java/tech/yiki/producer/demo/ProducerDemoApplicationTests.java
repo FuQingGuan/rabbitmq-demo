@@ -22,4 +22,16 @@ class ProducerDemoApplicationTests {
         );
     }
 
+    // 测试消费者集群 与 多线程消费
+    @Test
+    void contextLoads2() {
+        for (int i = 0; i < 100; i++) {
+            // convertAndSend 转化并发送消息, 消息内容是一个对象 在消息传输过程中会转化成二进制的形式发送(需要先声明交换机 启动消费者工程)
+            rabbitTemplate.convertAndSend(
+                    "spring_test_exchange", "a.b",
+                    "Hello " + i
+            ); // 交换机, rk, 消息
+        }
+    }
+
 }

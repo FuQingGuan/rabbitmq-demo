@@ -26,6 +26,12 @@ public class ConsumerListener {
             key = {"a.*"} // rk, 可以绑定多个
     ))
     public void test(String msg) { // 参数需要与生产者发送的类型一致
-        System.out.println("消费者接收到消息: " + msg);
+
+        try {
+            Thread.sleep(1000);
+            System.out.println("消费者接收到消息: " + msg);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

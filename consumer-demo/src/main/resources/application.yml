@@ -7,3 +7,9 @@ spring:
     virtual-host: /admin # 虚拟主机
     username: admin
     password: admin
+    listener:
+      # 消费者类型. direct 不能多线程消费
+      type: simple # simple 另开线程获取消息、direct 直接使用消费者主线程获取消息
+      simple:
+        # 设置能者多劳(公平分发): rabbitmq 默认是采用轮训的方式分配消息当有多个消费者接入时，消息的分配模式是一个消费者分配一条，直至消息消费完成.
+        prefetch: 1 # 消费完一条消息后才回去 队列获取下一条消息
