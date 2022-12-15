@@ -168,3 +168,10 @@ docker run -d -p 5672:5672 -p 15672:15672 -p 25672:25672 --name rabbitmq rabbitm
   </videos>
 </div>
 
+> 交换机、队列、消息都是在消费者中声明的. 消息持久化 也是在 消费者中声明的, 默认就是持久化的
+
+![](https://oss.yiki.tech/oss/202212151847673.png)
+
+![image-20221215184734877](https://oss.yiki.tech/oss/202212151847879.png)
+
+![](https://oss.yiki.tech/oss/202212151849755.png)

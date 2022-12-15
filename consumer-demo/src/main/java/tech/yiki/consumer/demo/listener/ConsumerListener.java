@@ -25,9 +25,13 @@ public class ConsumerListener {
     // 该注解会声明此方法是一个监听器, 可以监听队列获取消息
     @RabbitListener(bindings = @QueueBinding( // 声明绑定关系
             // 绑定的 队列, 将下方声明的交换机绑定给此队列
-            value = @Queue("spring_test_queue"),
+            value = @Queue(value = "spring_test_queue", durable = "true", // 使用 durable 指定是否需要持久化 默认是 true
+                    // 队列存在的情况下 如果声明一个属性与之前队列不一样 rabbitmq 就会报声明错误, ignoreDeclarationExceptions 可以使用忽略声明异常进行忽略(可以忽略声明异常使用既有的)
+                    ignoreDeclarationExceptions = "true"),
             // 需要与生产者中的交换机一致, type 交换机类型 TOPIC 通配模型支持通配符
-            exchange = @Exchange(value = "spring_test_exchange", type = ExchangeTypes.TOPIC),
+            exchange = @Exchange(value = "spring_test_exchange", // 使用 durable 指定是否需要持久化 默认是 true
+                    ignoreDeclarationExceptions = "ture", // 通常在 交换机中设置忽略声明异常, 可以避免重复声明
+                    type = ExchangeTypes.TOPIC),
             // a.* 以 a 开头 任意单词都可以匹配
             key = {"a.*"} // rk, 可以绑定多个
     ))
