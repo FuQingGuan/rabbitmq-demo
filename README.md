@@ -175,3 +175,15 @@ docker run -d -p 5672:5672 -p 15672:15672 -p 25672:25672 --name rabbitmq rabbitm
 ![image-20221215184734877](https://oss.yiki.tech/oss/202212151847879.png)
 
 ![](https://oss.yiki.tech/oss/202212151849755.png)
+
+#### 生产者确认
+
+> 生产者确认, yml 中配置 publisher-confirm-type 以及 publisher-returns 新增配置类设置 rabbitmq 的两个回调
+
+<div>
+  <!-- mp4格式 -->
+  <video id="video" controls="" width="800" height="500" preload="none" poster="封面">
+        <source id="mp4" src="https://oss.yiki.tech/oss/202212151906452.mp4" type="video/mp4">
+  </videos>
+</div>
+

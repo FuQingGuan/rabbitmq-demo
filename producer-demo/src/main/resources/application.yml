@@ -5,3 +5,10 @@ spring:
     virtual-host: /admin
     username: admin
     password: admin
+    # 生产者确认类型
+    #   none - 不确认模式
+    #   simple - 同步阻塞方式确认, 性能不高(等到死为止, 并发不过百可以使用. 可靠性较高)
+    #   correlated - 异步非阻塞方式确认, 性能较高
+    publisher-confirm-type: correlated
+    # 确认消息是否到达队列
+    publisher-returns: true

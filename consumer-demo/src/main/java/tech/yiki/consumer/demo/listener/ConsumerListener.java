@@ -47,7 +47,7 @@ public class ConsumerListener {
 
         try {
             System.out.println("消费者接收到消息: " + msg);
-            int i = 1 / 0;
+//            int i = 1 / 0;
 
             // TODO: 其他操作
 
