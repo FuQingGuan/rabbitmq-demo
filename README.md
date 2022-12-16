@@ -186,4 +186,48 @@ docker run -d -p 5672:5672 -p 15672:15672 -p 25672:25672 --name rabbitmq rabbitm
         <source id="mp4" src="https://oss.yiki.tech/oss/202212151906452.mp4" type="video/mp4">
   </videos>
 </div>
+## 死信队列
 
+> 死信: Dead Letter
+
+* 什么消息会变成死信消息
+  * basicNack / basicReject 中的 requeue 参数为 false
+  * 生存时间已到: 可以给消息设置生存时间, 时间已到 未被消费 
+  * 队列已满, 依然入队
+
+```java
+/**
+* 拒绝一封或多封收到的邮件。deliveryTag提供包含要拒绝的消息的 from 或AMQP.Basic.GetOkAMQP.Basic.GetOk方法。
+* 参数：   交付标签 – 来自已接收AMQP.Basic.GetOk或AMQP.Basic.Deliver的标签
+*         multiple – true 表示拒绝所有邮件，包括提供的传递标记;false 仅拒绝提供的交货标签。
+*         重新排队 – 如果拒绝的消息应重新排队而不是丢弃/死信，则为 true
+* 抛出：   IOException – 如果遇到错误
+* 另请参阅：AMQP.Basic.Nack
+*/
+void basicNack(long deliveryTag, boolean multiple, boolean requeue)
+        throws IOException;
+        
+/**
+* 拒绝邮件。从包含收到的邮件被拒绝的 or AMQP.Basic.Deliver 方法中AMQP.Basic.GetOk提供传递标记。
+* 参数：    交付标签 – 来自已接收AMQP.Basic.GetOk或AMQP.Basic.Deliver的标签
+*          重新排队 – 如果拒绝的消息应该重新排队而不是丢弃/死信，则为 true
+* 抛出：    IOException – 如果遇到错误
+* 另请参阅： AMQP.Basic.Reject
+*/        
+void basicReject(long deliveryTag, boolean requeue) throws IOException;
+```
+
+![](https://oss.yiki.tech/oss/202212152307463.png)
+
+* 概念
+  * 死信队列、死信交换机
+    * 本质都是普通的队列和交换机, 只是存储转发的是死信消息
+
+![](https://oss.yiki.tech/oss/202212161007229.png)
+
+<div>
+  <!-- mp4格式 -->
+  <video id="video" controls="" width="800" height="500" preload="none" poster="封面">
+        <source id="mp4" src="https://oss.yiki.tech/oss/202212161008480.mp4" type="video/mp4">
+  </videos>
+</div>

@@ -39,4 +39,17 @@ class ProducerDemoApplicationTests {
         }
     }
 
+    // 测试死信队列 死信交换机
+    @Test
+    void contextLoads3() throws InterruptedException {
+        rabbitTemplate.convertAndSend(
+                "spring_test_exchange2", "msg.test", "Hello World"
+        );
+
+        // 在测试方法中进行测试，当测试方法结束，rabbitmq相关的资源也就关闭了，虽然我们的消息发送出去，但异步的ConfirmCallback却由于资源关闭而出现了异常
+        // clean channel shutdown; protocol method: #method<channel.close>(reply-code=200, reply-text=OK, class-id=0, method-id=0)
+        // 在测试方法等待一段时间即可
+        Thread.sleep(2000);
+    }
+
 }

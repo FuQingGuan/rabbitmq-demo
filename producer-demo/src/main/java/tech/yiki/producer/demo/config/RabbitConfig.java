@@ -1,7 +1,14 @@
 package tech.yiki.producer.demo.config;
 
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.Exchange;
+import org.springframework.amqp.core.ExchangeBuilder;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
@@ -38,4 +45,81 @@ public class RabbitConfig {
         );
     }
 
+
+    /**
+     * 业务交换机: spring_test_exchange2
+     */
+    @Bean
+    public Exchange exchange() {
+        // Topic 交换机: 交换机名称、是否持久化、是否自动删除(没有任何队列与之绑定、没有任何生产者给交换机发送消息, 就会自动销毁. 可能暂时没有 生产者 队列 一般不会设置自动删除)
+//        return new TopicExchange("spring_test_exchange2", true, false);
+
+        return ExchangeBuilder.topicExchange("spring_test_exchange2")
+                .durable(true) // 是否持久化
+//                .autoDelete() // 是否自动删除
+                .build();
+    }
+
+    /**
+     * 业务队列: spring_test_queue2
+     */
+    @Bean
+    public Queue queue() {
+//        Map<String, Object> arguments = new HashMap<>();
+        // 指定死信交换机, 交换机名称(以后死信消息发 送给 什么名称的死信交换机 转发消息)
+//        arguments.put("x-dead-letter-exchange", "spring_dead_exchange");
+        // 指定 rk, 经过该 rk 就会进入 spring_dead_queue 死信队列
+//        arguments.put("x-dead-letter-routing-key", "msg.dead");
+
+        // 队列名称、是否持久化、是否排他(true 不能有多个消费者 只能有一个消费者。如果搭建集群 先启动的会生效 后启动的无法生效)、是否自动删除、其他参数(死信交换机 、 死信 rk、 死信队列)
+//        return new Queue("spring_test_queue2", true, false, false, arguments);
+
+        return QueueBuilder.durable("spring_test_queue2")
+                .deadLetterExchange("spring_dead_exchange")
+                .deadLetterRoutingKey("msg.dead")
+                .build();
+    }
+
+    /**
+     * 把业务队列绑定到业务交换机: rk = msg.test
+     */
+    @Bean
+    public Binding binding(Queue queue, Exchange exchange) { // 声明这两个参数 就会把对应的对象注入进来
+        // 声明绑定关系: 目的地(队列名称)、目的地类型(选择队列即可)、交换机名称(把队列绑定到那个交换机)、rk、其他参数
+//        return new Binding("spring_test_queue2", Binding.DestinationType.QUEUE,
+//                "spring_test_exchange2", "msg.test", null);
+
+        return BindingBuilder.bind(queue).to(exchange).with("msg.test").noargs();
+    }
+
+    /**
+     * 死信交换机: spring_dead_exchange
+     */
+    @Bean
+    public Exchange deadExchange() {
+        return ExchangeBuilder.topicExchange("spring_dead_exchange")
+                .durable(true)
+                .ignoreDeclarationExceptions() // 忽略声明异常
+                .build();
+    }
+
+    /**
+     * 死信队列: spring_dead_queue
+     */
+    @Bean
+    public Queue deadQueue() {
+        return QueueBuilder.durable("spring_dead_queue")
+                .build();
+    }
+
+    /**
+     * 把死信队列绑定到死信交换机: msg.dead
+     */
+    @Bean
+    public Binding deadBinding(Queue deadQueue, Exchange deadExchange) {
+        return BindingBuilder.bind(deadQueue)
+                .to(deadExchange)
+                .with("msg.dead")
+                .noargs();
+    }
 }
