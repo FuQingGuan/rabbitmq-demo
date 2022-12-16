@@ -106,4 +106,41 @@ public class ConsumerListener {
             }
         }
     }
+
+    // 该注解会声明此方法是一个监听器, 可以监听 死信队列 获取消息
+    @RabbitListener(queues = {"spring_dead_queue"}) // 在 RabbitConfig 已经配置, 无需再次重复定义
+    // Channel Message 消息确认时需要这两个参数
+    public void ttlTest(String msg , Channel channel, Message message) throws IOException { // 参数需要与生产者发送的类型一致
+
+//        try {
+//            Thread.sleep(1000);
+//            System.out.println("消费者接收到消息: " + msg);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
+        try {
+            System.out.println("消费者接收到消息: " + msg);
+            int i = 1 / 0;
+
+            // TODO: 关单操作
+
+            // 确认消息: 游标 直接 copy, 是否批量确认消息: 设置为 true 的话 从最近确认消息开始到当前消息之间未被确认的消息都被批量确认
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            // 判断消息是否重试投递过
+            if (message.getMessageProperties().getRedelivered()) { // 已重试过直接拒绝
+                // TODO: 记录日志, 或者保存到数据库表中 通过定时任务, 或者 人工排查 处理消息. 如果有死信队列会进入死信队列
+                log.error(msg + " : 未被正常消费");
+
+                // 拒绝消息: 游标, 重新入队
+                channel.basicReject(message.getMessageProperties().getDeliveryTag(), false); // 没有绑定死信队列 拒绝消息
+            } else { // 未重试过, 重新入队
+                // 不确认消息: 游标, 是否批量确认, 重新入队
+                channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, true);
+            }
+        }
+    }
 }

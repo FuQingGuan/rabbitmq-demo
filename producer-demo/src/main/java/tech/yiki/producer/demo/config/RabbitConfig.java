@@ -61,6 +61,30 @@ public class RabbitConfig {
     }
 
     /**
+     * 延迟队列: spring_ttl_queue
+     * @return
+     */
+    @Bean
+    public Queue ttlQueue() {
+        return QueueBuilder.durable("spring_ttl_queue")
+                .ttl(20000) // 延迟时间单位是 毫秒
+                .deadLetterExchange("spring_dead_exchange") // 死信交换机
+                .deadLetterRoutingKey("msg.dead") // rk
+                .build();
+    }
+
+    /**
+     * 把延迟队列绑定到业务交换机: msg.ttl
+     */
+    @Bean
+    public Binding ttlBinding(Queue ttlQueue, Exchange exchange) {
+        return BindingBuilder.bind(ttlQueue)
+                .to(exchange)
+                .with("msg.ttl")
+                .noargs();
+    }
+
+    /**
      * 业务队列: spring_test_queue2
      */
     @Bean
